@@ -36,6 +36,8 @@ function App() {
     accountId: "",
   });
 
+  //page load howar sathe sathe e api gula load hbe
+
   useEffect(() => {
     ZOHO.embeddedApp.on("PageLoad", function (data) {
       console.log(data);
@@ -121,8 +123,6 @@ function App() {
     }
   }, [zohoLoaded, entity, entityId]);
 
-  console.log(relatedRecord);
-
   const deal_name = recordData?.data?.[0]?.Deal_Name;
   const account_name = recordData?.data?.[0]?.Account_Name?.name;
   const account_id = recordData?.data?.[0]?.Account_Name?.id;
@@ -130,6 +130,8 @@ function App() {
   const Status = recordData?.data?.[0]?.Status;
   const amount = recordData?.data?.[0]?.Amount;
   const website = recordData?.data?.[0]?.Website;
+
+  //window reload hbe
   const closeWindow = () => {
     if (ZOHO?.CRM?.UI?.Popup?.closeReload) {
       ZOHO.CRM.UI.Popup.closeReload();
@@ -141,6 +143,20 @@ function App() {
     }
     window.close();
   };
+  // eta call krle load hbe
+  const refreshRelatedQuotes = () => {
+    return ZOHO.CRM.API.getRelatedRecords({
+      Entity: entity,
+      RecordID: entityId,
+      RelatedList: "Quotes",
+      page: 1,
+      per_page: 10,
+    }).then(function (data) {
+      setRelatedRecord(data);
+    });
+  };
+
+  // deal update form er functionalities
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -220,17 +236,8 @@ function App() {
         setTimeout(() => setUpdateStatus(""), 2000);
       });
   };
-  const refreshRelatedQuotes = () => {
-    return ZOHO.CRM.API.getRelatedRecords({
-      Entity: entity,
-      RecordID: entityId,
-      RelatedList: "Quotes",
-      page: 1,
-      per_page: 10,
-    }).then(function (data) {
-      setRelatedRecord(data);
-    });
-  };
+
+  //quote create korar jinish potro
 
   const createQuote = () => {
     setIsCreateModalOpen(true);
@@ -297,6 +304,7 @@ function App() {
     closeCreateModal();
   };
 
+  // edit quoter er jinish potro
   const handleEdit = (id) => {
     const selectedQuote = relatedRecord?.data?.find(
       (record) => record?.id === id,
@@ -414,6 +422,7 @@ function App() {
     }
   };
 
+  // delete quote er jinish potro
   const handleDelete = async (id) => {
     if (!id || !entity || !entityId) {
       toast.error("Unable to delete quote. Missing record details.", {
@@ -430,13 +439,29 @@ function App() {
       return;
     }
     try {
-      const deleteResponse = await ZOHO.CRM.API.deleteRecord({
+      let de_link = false;
+      var config = {
         Entity: "Quotes",
-        RecordID: id,
-      });
+        APIData: {
+          id: id,
+          Deal_Name: {},
+        },
+        Trigger: [],
+      };
+      const de_linked = await ZOHO.CRM.API.updateRecord(config);
+      if (de_linked?.data?.[0]?.code === "SUCCESS") {
+        de_link = true;
+      }
 
-      if (deleteResponse?.data?.[0]?.code !== "SUCCESS") {
-        throw new Error("Delete failed");
+      if (!de_link) {
+        const deleteResponse = await ZOHO.CRM.API.deleteRecord({
+          Entity: "Quotes",
+          RecordID: id,
+        });
+
+        if (deleteResponse?.data?.[0]?.code !== "SUCCESS") {
+          throw new Error("Delete failed");
+        }
       }
       await refreshRelatedQuotes();
       toast.success("Successfully Deleted Quote", {
