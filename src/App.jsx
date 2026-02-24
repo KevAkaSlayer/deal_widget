@@ -200,7 +200,6 @@ function App() {
             function (refreshedData) {
               setRecordData(refreshedData);
               setTimeout(() => setUpdateStatus(""), 2000);
-              setTimeout(() => closeWindow(), 2000);
             },
           );
         } else {
@@ -464,7 +463,7 @@ function App() {
         }
       }
       await refreshRelatedQuotes();
-      toast.success("Successfully Deleted Quote", {
+      toast.success("Successfully Removed Quote", {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -477,7 +476,7 @@ function App() {
       });
     } catch (error) {
       console.error("Delete error:", error);
-      toast.error("Failed to delete quote", {
+      toast.error("Failed to remove quote", {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -780,6 +779,22 @@ function App() {
               </div>
             </div>
           ) : null}
+          <div className="mt-2 flex justify-end gap-2">
+            <button
+              type="button"
+              className="btn btn-outline"
+              onClick={closeWindow}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={closeWindow}
+              type="submit"
+              className="btn btn-neutral"
+            >
+              Save
+            </button>
+          </div>
         </div>
       ) : (
         <div className="App">
