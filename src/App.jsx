@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./App.css";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -11,10 +11,15 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { DataContext } from "./contexts/DataContext";
 
 const ZOHO = window.ZOHO;
 
 function App() {
+  const dataContext = useContext(DataContext);
+  const closeWindow = dataContext?.closeWindow;
+  const closeWindowReload = dataContext?.closeWindowReload;
+
   const [zohoLoaded, setZohoLoaded] = useState(false);
   const [entity, setEntity] = useState("");
   const [entityId, setEntityId] = useState("");
@@ -55,9 +60,9 @@ function App() {
           setRecordData(data || []);
         },
       );
-      ZOHO.CRM.UI.Resize({ height: "80%", width: "50%" }).then(function (data) {
-        console.log(data);
-      });
+      ZOHO.CRM.UI.Resize({ height: "80%", width: "50%" }).then(
+        function (data) {},
+      );
       ZOHO.CRM.API.getRelatedRecords({
         Entity: entity,
         RecordID: entityId,
@@ -89,7 +94,6 @@ function App() {
         .catch(function () {
           setProductOptions([]);
         });
-
       ZOHO.CRM.META.getFields({ Entity: "Deals" })
         .then(function (data) {
           const fields = data?.fields || [];
@@ -131,19 +135,7 @@ function App() {
   const amount = recordData?.data?.[0]?.Amount;
   const website = recordData?.data?.[0]?.Website;
 
-  //window reload hbe
-  const closeWindow = () => {
-    if (ZOHO?.CRM?.UI?.Popup?.closeReload) {
-      ZOHO.CRM.UI.Popup.closeReload();
-      return;
-    }
-    if (ZOHO?.CRM?.UI?.Popup?.close) {
-      ZOHO.CRM.UI.Popup.close();
-      return;
-    }
-    window.close();
-  };
-  // eta call krle load hbe
+  // eta call krle data refresh hbe
   const refreshRelatedQuotes = () => {
     return ZOHO.CRM.API.getRelatedRecords({
       Entity: entity,
@@ -182,7 +174,6 @@ function App() {
     };
     ZOHO.CRM.API.updateRecord(config)
       .then(function (data) {
-        console.log("Update response:", data);
         if (data?.data?.[0]?.code === "SUCCESS") {
           setUpdateStatus("Record updated successfully!");
           toast.success("Successfully Updated", {
@@ -252,7 +243,7 @@ function App() {
     const account_id = e.target.accountId.value;
     const product_id = e.target.product_id.value;
     const quantity = e.target.qunatity.value;
-    console.log(quantity, quote_name, quote_stage, account_id, product_id);
+
     var quoteData = {
       Subject: quote_name,
       Deal_Name: { id: entityId },
@@ -322,7 +313,6 @@ function App() {
       });
       return;
     }
-
     setEditQuote({
       id: selectedQuote?.id || "",
       subject: selectedQuote?.Subject || "",
@@ -420,7 +410,6 @@ function App() {
       setIsSavingQuote(false);
     }
   };
-
   // delete quote er jinish potro
   const handleDelete = async (id) => {
     if (!id || !entity || !entityId) {
@@ -539,7 +528,7 @@ function App() {
                 />
                 <label className="label text-left">Status</label>
                 <select className="select select-bordered" name="status">
-                  <option value="">{Status}</option>
+                  <option value={Status}>{Status}</option>
                   {dealStatusOptions?.map((statusOption) => (
                     <option key={statusOption} value={statusOption}>
                       {statusOption}
@@ -788,7 +777,7 @@ function App() {
               Cancel
             </button>
             <button
-              onClick={closeWindow}
+              onClick={closeWindowReload}
               type="submit"
               className="btn btn-neutral"
             >
