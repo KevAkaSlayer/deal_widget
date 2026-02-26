@@ -37,6 +37,7 @@ export default function RelatedQuotesTable({
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isSavingQuote, setIsSavingQuote] = useState(false);
+  const [editProduct, setEditProducts] = useState([]);
   const [createProducts, setCreateProducts] = useState([
     getDefaultProductRow(),
   ]);
@@ -46,6 +47,7 @@ export default function RelatedQuotesTable({
     stage: "",
     total: "",
     accountId: "",
+    product_details: [],
   });
 
   const refreshRelatedQuotes = () => {
@@ -93,7 +95,6 @@ export default function RelatedQuotesTable({
         if (row.rowId !== rowId) {
           return row;
         }
-
         return {
           ...row,
           [field]: field === "quantity" ? Number(value) : value,
@@ -158,8 +159,11 @@ export default function RelatedQuotesTable({
       stage: selectedQuote?.Quote_Stage || "",
       total: selectedQuote?.Grand_Total || "",
       accountId: selectedQuote?.Account_Name?.id || "",
+      product_details: selectedQuote?.Product_Details || [],
     });
     setIsEditModalOpen(true);
+    setEditProducts(selectedQuote?.Product_Details || []);
+    console.log(editProduct);
   };
 
   const closeEditModal = () => {
@@ -171,6 +175,7 @@ export default function RelatedQuotesTable({
       stage: "",
       total: "",
       accountId: "",
+      product_details: [],
     });
   };
 
@@ -322,32 +327,6 @@ export default function RelatedQuotesTable({
               onChange={handleEditQuoteChange}
               required
             />
-
-            <label className="label text-left">Quote Stage</label>
-            <select
-              className="select select-bordered"
-              name="stage"
-              value={editQuote.stage}
-              onChange={handleEditQuoteChange}
-            >
-              <option value="">Select stage</option>
-              {quoteStageOptions?.map((stageOption) => (
-                <option key={stageOption} value={stageOption}>
-                  {stageOption}
-                </option>
-              ))}
-            </select>
-
-            <label className="label text-left">Grand Total</label>
-            <input
-              className="input"
-              type="number"
-              readOnly
-              name="total"
-              value={editQuote.total}
-              onChange={handleEditQuoteChange}
-            />
-
             <label className="label text-left">Account Name</label>
             <select
               className="select select-bordered"
@@ -362,7 +341,51 @@ export default function RelatedQuotesTable({
                 </option>
               ))}
             </select>
+            <label className="label text-left">Quote Stage</label>
+            <select
+              className="select select-bordered"
+              name="stage"
+              value={editQuote.stage}
+              onChange={handleEditQuoteChange}
+            >
+              <option value="">Select stage</option>
+              {quoteStageOptions?.map((stageOption) => (
+                <option key={stageOption} value={stageOption}>
+                  {stageOption}
+                </option>
+              ))}
+            </select>
+            <div className="flex items-end gap-2">
+              <label className="label text-left mx-1">Product Name</label>
+              <select className="select select-bordered w-full" required>
+                <option value="">Select product</option>
+                {productOptions?.map((product) => (
+                  <option key={product?.id} value={product?.id}>
+                    {product?.Product_Name}
+                  </option>
+                ))}
+              </select>
+              <label className="label text-left mx-1">Quantity</label>
+              <input
+                className="input w-24"
+                type="number"
+                min="1"
+                step="1"
+                required
+              />
+              <button className="btn btn-sm btn-outline">Remove</button>
+              <button className="btn btn-sm btn-neutral">Add</button>
+            </div>
 
+            <label className="label text-left">Grand Total</label>
+            <input
+              className="input"
+              type="number"
+              readOnly
+              name="total"
+              value={editQuote.total}
+              onChange={handleEditQuoteChange}
+            />
             <ModalActions
               onCancel={closeEditModal}
               cancelDisabled={isSavingQuote}
