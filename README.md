@@ -1,22 +1,85 @@
 # Zoho CRM Deal Widget
 
-To clone This repo use command : git clone https://github.com/KevAkaSlayer/deal_widget.git
+A React + Vite widget for the **Zoho CRM Deal module**.
 
-install necessary dependencies
-cmd : npm install
+## ✨ What this project does
 
-#TO Add the Widget in the Zoho CRM Do the Following
+- Provides a custom Deal widget UI.
+- Supports local development with Vite.
+- Can be hosted externally and connected in Zoho CRM.
 
-First go to CRM "Deal" Module then select Create Button
+## 📦 Tech stack
 
-![alt text](image.png)
+- React 19
+- Vite
+- MUI
+- Tailwind CSS + DaisyUI
 
-In configured Widget Section => choose => new widget => select hosting "External" => if you want to run locally then use this as a base url http://localhost:5173 or provide external hosting link
-![alt text](image-1.png)
+## 🚀 Quick start
 
-then save it it will show bottom of the pop up install it.After successfull installation it will show installed
-Then Select Profile and save it.
+### 1) Clone the repository
 
-to run use : npm run dev
+```bash
+git clone https://github.com/KevAkaSlayer/deal_widget.git
+cd deal_widget
+```
 
-after finishing the customization use : npm run build
+### 2) Install dependencies
+
+```bash
+npm install
+```
+
+### 3) Start development server
+
+```bash
+npm run dev
+```
+
+Default local URL: `http://localhost:5173`
+
+## 🧪 Available scripts
+
+| Command           | Description                      |
+| ----------------- | -------------------------------- |
+| `npm run dev`     | Start local dev server           |
+| `npm run build`   | Build production bundle          |
+| `npm run preview` | Preview production build locally |
+| `npm run lint`    | Run ESLint                       |
+
+## 🔧 Add this widget to Zoho CRM (Deals)
+
+1. Open **Zoho CRM** and go to the **Deals** module.
+2. Click **Create**.
+
+![Zoho Deal create flow](image.png)
+
+3. In the widget configuration section:
+   - Select **New Widget**
+   - Choose hosting as **External**
+   - Set base URL:
+     - Local development: `http://localhost:5173`
+     - Production: your hosted app URL
+
+![Widget configuration](image-1.png)
+
+4. Save and install the widget from the popup.
+5. After installation shows as **Installed**, select profile(s) and save.
+
+## 📁 Project structure
+
+```text
+src/
+	components/
+	contexts/
+	services/
+	utils/
+```
+
+## ✅ Build for production
+
+```bash
+npm run build
+```
+
+The production output is generated in the `dist/` folder.
