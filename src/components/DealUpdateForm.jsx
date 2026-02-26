@@ -1,6 +1,5 @@
-import React from "react";
-import { Bounce, toast } from "react-toastify";
-import { ZOHO } from "../contexts/DataProvider";
+import { notifyError, notifySuccess } from "../utils/toast";
+import { getRecord, isApiSuccess, updateDealRecord } from "../services/zohoApi";
 export default function DealUpdateForm({
   recordData,
   accountOptions,
@@ -25,65 +24,30 @@ export default function DealUpdateForm({
     const updated_amount = e.target.amount.value;
     const updated_status = e.target.status.value;
     const updated_website = e.target.website.value;
-    const config = {
-      Entity: entity,
-      APIData: {
-        id: entityId,
-        Deal_Name: updated_deal_name,
-        Account_Name: { id: updated_account_id },
-        Email: updated_email,
-        Amount: updated_amount,
-        Status: updated_status,
-        Website: updated_website,
-      },
-      Trigger: [],
+    const apiData = {
+      id: entityId,
+      Deal_Name: updated_deal_name,
+      Account_Name: { id: updated_account_id },
+      Email: updated_email,
+      Amount: updated_amount,
+      Status: updated_status,
+      Website: updated_website,
     };
-    ZOHO.CRM.API.updateRecord(config)
+
+    updateDealRecord(entity, apiData)
       .then(function (data) {
-        if (data?.data?.[0]?.code === "SUCCESS") {
-          toast.success("Successfully Updated", {
-            position: "top-center",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: false,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            transition: Bounce,
+        if (isApiSuccess(data)) {
+          notifySuccess("Successfully Updated");
+          getRecord(entity, entityId).then(function (refreshedData) {
+            setRecordData(refreshedData);
           });
-          ZOHO.CRM.API.getRecord({ Entity: entity, RecordID: entityId }).then(
-            function (refreshedData) {
-              setRecordData(refreshedData);
-            },
-          );
         } else {
-          toast.error("Error", {
-            position: "top-center",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: false,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            transition: Bounce,
-          });
+          notifyError("Error");
         }
       })
       .catch(function (error) {
         console.error("Update error:", error);
-        toast.error("Error", {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        notifyError("Error");
       });
   };
 
