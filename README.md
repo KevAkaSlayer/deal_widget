@@ -1,16 +1,22 @@
-# React + Vite
+# Zoho CRM Deal Widget
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+To clone This repo use command : git clone https://github.com/KevAkaSlayer/deal_widget.git
 
-Currently, two official plugins are available:
+install necessary dependencies
+cmd : npm install
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+#TO Add the Widget in the Zoho CRM Do the Following
 
-## React Compiler
+First go to CRM "Deal" Module then select Create Button
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+![alt text](image.png)
 
-## Expanding the ESLint configuration
+In configured Widget Section => choose => new widget => select hosting "External" => if you want to run locally then use this as a base url http://localhost:5173 or provide external hosting link
+![alt text](image-1.png)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+then save it it will show bottom of the pop up install it.After successfull installation it will show installed
+Then Select Profile and save it.
+
+to run use : npm run dev
+
+after finishing the customization use : npm run build

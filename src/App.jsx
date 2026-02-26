@@ -88,7 +88,7 @@ function App() {
   return (
     <>
       {zohoLoaded ? (
-        <div className="App border-2 rounded-xl p-4">
+        <div className="App border-2 rounded-xl p-3">
           <h1>Deal Widget</h1>
           <section>
             <DealUpdateForm
