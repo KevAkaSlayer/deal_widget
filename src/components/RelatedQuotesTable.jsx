@@ -33,7 +33,7 @@ export default function RelatedQuotesTable({
     quantity: 1,
   });
 
-  const mapQuoteProductsToRows = (productDetails = []) => {
+  const mapQuoteProductsToRows = (productDetails) => {
     const rows = productDetails
       .map((product) => ({
         rowId: Date.now() + Math.random(),
@@ -173,7 +173,6 @@ export default function RelatedQuotesTable({
       accountId: selectedQuote?.Account_Name?.id || "",
       product_details: selectedQuote?.Product_Details || [],
     });
-    console.log(selectedQuote?.Product_Details);
     setEditProducts(
       mapQuoteProductsToRows(selectedQuote?.Product_Details || []),
     );
