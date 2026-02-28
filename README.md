@@ -8,9 +8,9 @@ A React + Vite widget for the **Zoho CRM Deal module**.
 | ------------------------------- | --------------------------------- |
 | ![Edit modal view](image-5.png) | ![Create modal view](image-3.png) |
 
-      | Main View                                              |
-      | ------------------------------------------------------ |
-      | ![Main deal and related quote table view](image-2.png) |
+| Main View                                              |
+| ------------------------------------------------------ |
+| ![Main deal and related quote table view](image-2.png) |
 
 ## ✨ What this project does
 
