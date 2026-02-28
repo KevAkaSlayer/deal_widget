@@ -39,47 +39,22 @@ function App() {
     if (zohoLoaded && entity && entityId) {
       const loadData = async () => {
         resizeWidget().catch(function () {});
-        const [
-          recordResult,
-          accountResult,
-          productResult,
-          dealStatusResult,
-          quoteStageResult,
-        ] = await Promise.allSettled([
-          getRecord(entity, entityId),
-          getAllRecords("Accounts"),
-          getAllRecords("Products"),
-          getFieldPicklistValues("Deals", "Status"),
-          getFieldPicklistValues("Quotes", "Quote_Stage"),
-        ]);
-
-        if (recordResult.status === "fulfilled") {
-          setRecordData(recordResult.value || []);
-        }
-
-        if (accountResult.status === "fulfilled") {
-          setAccountOptions(accountResult.value?.data || []);
-        } else {
-          setAccountOptions([]);
-        }
-
-        if (productResult.status === "fulfilled") {
-          setProductOptions(productResult.value?.data || []);
-        } else {
-          setProductOptions([]);
-        }
-
-        if (dealStatusResult.status === "fulfilled") {
-          setDealStatusOptions(dealStatusResult.value || []);
-        } else {
-          setDealStatusOptions([]);
-        }
-
-        if (quoteStageResult.status === "fulfilled") {
-          setQuoteStageOptions(quoteStageResult.value || []);
-        } else {
-          setQuoteStageOptions([]);
-        }
+        const recordResult = await getRecord(entity, entityId);
+        setRecordData(recordResult);
+        const accountResult = await getAllRecords("Accounts");
+        setAccountOptions(accountResult?.data || []);
+        const productResult = await getAllRecords("Products");
+        setProductOptions(productResult?.data || []);
+        const dealStatusResult = await getFieldPicklistValues(
+          "Deals",
+          "Status",
+        );
+        setDealStatusOptions(dealStatusResult || []);
+        const quoteStageResult = await getFieldPicklistValues(
+          "Quotes",
+          "Quote_Stage",
+        );
+        setQuoteStageOptions(quoteStageResult || []);
       };
       loadData();
     }
