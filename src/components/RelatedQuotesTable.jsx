@@ -33,11 +33,23 @@ export default function RelatedQuotesTable({
     quantity: 1,
   });
 
+  const mapQuoteProductsToRows = (productDetails = []) => {
+    const rows = productDetails
+      .map((product) => ({
+        rowId: Date.now() + Math.random(),
+        productId: product?.product?.id || "",
+        quantity: Number(product?.quantity) || 1,
+      }))
+      .filter((row) => row.productId);
+
+    return rows.length ? rows : [getDefaultProductRow()];
+  };
+
   const [relatedRecord, setRelatedRecord] = useState([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isSavingQuote, setIsSavingQuote] = useState(false);
-  const [editProduct, setEditProducts] = useState([]);
+  const [editProducts, setEditProducts] = useState([getDefaultProductRow()]);
   const [createProducts, setCreateProducts] = useState([
     getDefaultProductRow(),
   ]);
@@ -161,14 +173,45 @@ export default function RelatedQuotesTable({
       accountId: selectedQuote?.Account_Name?.id || "",
       product_details: selectedQuote?.Product_Details || [],
     });
+    console.log(selectedQuote?.Product_Details);
+    setEditProducts(
+      mapQuoteProductsToRows(selectedQuote?.Product_Details || []),
+    );
     setIsEditModalOpen(true);
-    setEditProducts(selectedQuote?.Product_Details || []);
-    console.log(editProduct);
+  };
+
+  const handleEditAddProductRow = () => {
+    setEditProducts((prev) => [...prev, getDefaultProductRow()]);
+  };
+
+  const handleEditRemoveProductRow = (rowId) => {
+    setEditProducts((prev) => {
+      if (prev.length === 1) {
+        return prev;
+      }
+
+      return prev.filter((product) => product.rowId !== rowId);
+    });
+  };
+
+  const handleEditProductChange = (rowId, field, value) => {
+    setEditProducts((prev) =>
+      prev.map((product) => {
+        if (product.rowId === rowId) {
+          return {
+            ...product,
+            [field]: field === "quantity" ? Number(value) : value,
+          };
+        }
+        return product;
+      }),
+    );
   };
 
   const closeEditModal = () => {
     setIsEditModalOpen(false);
     setIsSavingQuote(false);
+    setEditProducts([getDefaultProductRow()]);
     setEditQuote({
       id: "",
       subject: "",
@@ -195,6 +238,18 @@ export default function RelatedQuotesTable({
       return;
     }
 
+    const productDetails = editProducts
+      .filter((row) => row.productId && row.quantity > 0)
+      .map((row) => ({
+        product: { id: row.productId },
+        quantity: parseInt(row.quantity),
+      }));
+
+    if (!productDetails.length) {
+      notifyError("Add at least one valid product");
+      return;
+    }
+
     setIsSavingQuote(true);
 
     try {
@@ -203,6 +258,7 @@ export default function RelatedQuotesTable({
         Subject: editQuote.subject,
         Quote_Stage: editQuote.stage,
         Grand_Total: editQuote.total,
+        Product_Details: productDetails,
       };
 
       if (editQuote.accountId) {
@@ -355,27 +411,67 @@ export default function RelatedQuotesTable({
                 </option>
               ))}
             </select>
-            <div className="flex items-end gap-2">
-              <label className="label text-left mx-1">Product Name</label>
-              <select className="select select-bordered w-full" required>
-                <option value="">Select product</option>
-                {productOptions?.map((product) => (
-                  <option key={product?.id} value={product?.id}>
-                    {product?.Product_Name}
-                  </option>
-                ))}
-              </select>
-              <label className="label text-left mx-1">Quantity</label>
-              <input
-                className="input w-24"
-                type="number"
-                min="1"
-                step="1"
-                required
-              />
-              <button className="btn btn-sm btn-outline">Remove</button>
-              <button className="btn btn-sm btn-neutral">Add</button>
-            </div>
+            {editProducts.map((row, index) => (
+              <div className="flex items-end gap-2" key={row.rowId}>
+                <div className="flex-1">
+                  <label className="label text-left mx-1">Product Name</label>
+                  <select
+                    className="select select-bordered w-full"
+                    value={row.productId}
+                    required
+                    onChange={(event) =>
+                      handleEditProductChange(
+                        row.rowId,
+                        "productId",
+                        event.target.value,
+                      )
+                    }
+                  >
+                    <option value="">Select product</option>
+                    {productOptions?.map((product) => (
+                      <option key={product?.id} value={product?.id}>
+                        {product?.Product_Name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="label text-left mx-1">Quantity</label>
+                  <input
+                    className="input w-24"
+                    type="number"
+                    min="1"
+                    step="1"
+                    value={row.quantity}
+                    onChange={(event) =>
+                      handleEditProductChange(
+                        row.rowId,
+                        "quantity",
+                        event.target.value,
+                      )
+                    }
+                    required
+                  />
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-sm"
+                  onClick={() => handleEditRemoveProductRow(row.rowId)}
+                  disabled={editProducts.length === 1}
+                >
+                  Remove
+                </button>
+                {index === editProducts.length - 1 ? (
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline"
+                    onClick={handleEditAddProductRow}
+                  >
+                    Add Product
+                  </button>
+                ) : null}
+              </div>
+            ))}
 
             <label className="label text-left">Grand Total</label>
             <input
