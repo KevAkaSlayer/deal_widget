@@ -49,6 +49,7 @@ export default function RelatedQuotesTable({
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isSavingQuote, setIsSavingQuote] = useState(false);
+  const [isCreatingQuote, setIsCreatingQuote] = useState(false);
   const [editProducts, setEditProducts] = useState([getDefaultProductRow()]);
   const [createProducts, setCreateProducts] = useState([
     getDefaultProductRow(),
@@ -79,6 +80,7 @@ export default function RelatedQuotesTable({
 
   const closeCreateModal = () => {
     setIsCreateModalOpen(false);
+    setIsCreatingQuote(false);
     setCreateProducts([getDefaultProductRow()]);
   };
 
@@ -133,7 +135,7 @@ export default function RelatedQuotesTable({
       notifyError("Add at least one valid product");
       return;
     }
-
+    setIsCreatingQuote(true);
     const quoteData = {
       Subject: quoteName,
       Deal_Name: { id: entityId },
@@ -151,6 +153,7 @@ export default function RelatedQuotesTable({
     } catch (error) {
       console.error("Create quote error:", error);
       notifyError("Failed to create quote");
+      setIsCreatingQuote(false);
     }
     closeCreateModal();
   };
@@ -589,7 +592,12 @@ export default function RelatedQuotesTable({
               </div>
             ))}
 
-            <ModalActions onCancel={closeCreateModal} submitLabel="create" />
+            <ModalActions
+              onCancel={closeCreateModal}
+              cancelDisabled={isCreatingQuote}
+              submitDisabled={isCreatingQuote}
+              submitLabel={isCreatingQuote ? "Creating..." : "Create"}
+            />
           </form>
         </FormModal>
       ) : null}

@@ -1,5 +1,6 @@
 import { notifyError, notifySuccess } from "../utils/toast";
 import { getRecord, isApiSuccess, updateDealRecord } from "../services/zohoApi";
+import { useState } from "react";
 export default function DealUpdateForm({
   recordData,
   accountOptions,
@@ -8,6 +9,16 @@ export default function DealUpdateForm({
   entity,
   entityId,
 }) {
+  // const [editDeal, setEditDeal] = useState({
+  //   deal_name : "",
+  //   account_name: "",
+  //   account_id : "",
+  //   email : "",
+  //   status : "",
+  //   amount : "",
+  //   website: ""
+  // });
+
   const deal_name = recordData?.data?.[0]?.Deal_Name;
   const account_name = recordData?.data?.[0]?.Account_Name?.name;
   const account_id = recordData?.data?.[0]?.Account_Name?.id;
@@ -100,9 +111,9 @@ export default function DealUpdateForm({
             </select>
             <label className="label">Website</label>
             <input
-              className="input"
-              name="website"
               type="text"
+              name="website"
+              className="input"
               defaultValue={website}
             />
           </div>
